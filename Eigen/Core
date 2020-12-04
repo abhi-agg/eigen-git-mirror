@@ -185,7 +185,7 @@
     // with conflicting linkage.  The linkage for intrinsics doesn't matter, but at that stage the compiler doesn't know;
     // so, to avoid compile errors when windows.h is included after Eigen/Core, ensure intrinsics are extern "C" here too.
     // notice that since these are C headers, the extern "C" is theoretically needed anyways.
-    extern "C" {
+    //extern "C" {
       // In theory we should only include immintrin.h and not the other *mmintrin.h header files directly.
       // Doing so triggers some issues with ICC. However old gcc versions seems to not have this file, thus:
       //#if EIGEN_COMP_ICC >= 1110
@@ -212,7 +212,7 @@
         #include <immintrin.h>
         #endif
       #endif
-    } // end extern "C"
+    //} // end extern "C"
   #elif defined __VSX__
     #define EIGEN_VECTORIZE
     #define EIGEN_VECTORIZE_VSX
