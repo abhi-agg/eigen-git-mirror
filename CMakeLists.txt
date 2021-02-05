@@ -26,6 +26,7 @@ if(    NOT cmake_build_type_tolower STREQUAL "debug"
   message(FATAL_ERROR "Unknown build type \"${CMAKE_BUILD_TYPE}\". Allowed values are Debug, Release, RelWithDebInfo (case-insensitive).")
 endif()
 
+option(COMPILE_MAIN_EIGEN "Compile main eigen, leaving doc and tests" ON)
 
 #############################################################################
 # retrieve version infomation                                               #
@@ -433,9 +434,14 @@ endif()
 
 add_subdirectory(Eigen)
 
-add_subdirectory(doc EXCLUDE_FROM_ALL)
+if (COMPILE_MAIN_EIGEN)
+  option(BUILD_TESTING "Enable creation of Eigen tests." OFF)
+else()
+  add_subdirectory(doc EXCLUDE_FROM_ALL)
 
-option(BUILD_TESTING "Enable creation of Eigen tests." ON)
+  option(BUILD_TESTING "Enable creation of Eigen tests." ON)
+endif()
+
 if(BUILD_TESTING)
   include(EigenConfigureTesting)
 
@@ -461,12 +467,14 @@ if(EIGEN_TEST_SYCL)
   include(FindComputeCpp)
 endif()
 
-add_subdirectory(unsupported)
+if (NOT COMPILE_MAIN_EIGEN)
+  add_subdirectory(unsupported)
 
-add_subdirectory(demos EXCLUDE_FROM_ALL)
+  add_subdirectory(demos EXCLUDE_FROM_ALL)
 
-# must be after test and unsupported, for configuring buildtests.in
-add_subdirectory(scripts EXCLUDE_FROM_ALL)
+  # must be after test and unsupported, for configuring buildtests.in
+  add_subdirectory(scripts EXCLUDE_FROM_ALL)
+endif()
 
 # TODO: consider also replacing EIGEN_BUILD_BTL by a custom target "make btl"?
 if(EIGEN_BUILD_BTL)
